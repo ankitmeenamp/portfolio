@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
 import { z } from "zod";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const schema = z.object({
   name: z.string().min(2),
@@ -13,6 +10,19 @@ const schema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const data = schema.parse(await req.json());
+
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.warn("RESEND_API_KEY missing — email not sent");
+      return NextResponse.json(
+        { error: "Email service not configured" },
+        { status: 500 }
+      );
+    }
+
+    // Dynamic import — sirf runtime pe load hoga, build time pe nahi
+    const { Resend } = await import("resend");
+    const resend = new Resend(apiKey);
 
     await resend.emails.send({
       from: "Portfolio <onboarding@resend.dev>",
@@ -29,7 +39,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
