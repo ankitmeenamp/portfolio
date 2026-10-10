@@ -20,8 +20,8 @@ Personal portfolio built with Next.js 15, TypeScript, Tailwind CSS, and Framer M
 
 ## 🛠️ Local Setup
 \`\`\`bash
-git clone https://github.com/ankitmeenamp/ankit-portfolio.git
-cd ankit-portfolio
+git clone https://github.com/ankitmeenamp/portfolio
+cd portfolio
 npm install
 npm run dev
 \`\`\`
